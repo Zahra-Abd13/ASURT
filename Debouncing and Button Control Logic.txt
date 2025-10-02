@@ -1,0 +1,24 @@
+1. Button Control Logic
+The system uses a push button on PA0 (input with pull-up) to control an LED on PC13 (output). The program detects a falling edge (HIGH to LOW transition) to toggle the LED:
+cif (button_state == GPIO_PIN_RESET && last_button_state == GPIO_PIN_SET)
+{
+    HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+}
+This ensures the LED toggles once per button press, not continuously while held.
+2. Debouncing Logic (Software Filtering)
+Problem: Mechanical buttons "bounce" - contacts rapidly open and close (5-20ms), causing multiple false triggers.
+Solution: Software filtering using consecutive sampling:
+
+Takes 5 consecutive readings with 5ms intervals (total 25ms)
+Only accepts the state if all samples are consistent
+Filters out bounce noise by validating signal stability
+
+Algorithm:
+
+Read button state
+Wait 5ms
+Read again and compare
+Repeat 5 times
+Return stable state only if all readings match
+
+Why it works: Instead of just waiting (simple delay), this method actively validates the signal is stable, eliminating false triggers from mechanical bounce and electrical noise.

@@ -1,0 +1,7 @@
+# Ignore build files
+Debug/
+Release/
+.settings/
+*.o
+*.d
+*.elf
